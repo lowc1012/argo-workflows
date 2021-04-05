@@ -68,8 +68,8 @@ func NewCacheFactory(ki kubernetes.Interface, ns string) Factory {
 type CacheType string
 
 const (
-	// Only config maps are currently supported for caching
-	ConfigMapCache CacheType = "ConfigMapCache"
+	ConfigMapCache      CacheType = "ConfigMapCache"
+	ArtifactDriverCache CacheType = "ArtifactDriverCache"
 )
 
 // Returns a cache if it exists and creates it otherwise
@@ -81,6 +81,10 @@ func (cf *cacheFactory) GetCache(ct CacheType, name string) MemoizationCache {
 	switch ct {
 	case ConfigMapCache:
 		c := NewConfigMapCache(cf.namespace, cf.kubeclient, name)
+		cf.caches[idx] = c
+		return c
+	case ArtifactDriverCache:
+		c := NewArtifactDriverCache(name)
 		cf.caches[idx] = c
 		return c
 	default:
